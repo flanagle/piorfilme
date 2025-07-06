@@ -6,6 +6,7 @@ import com.outsera.piorfilme.repository.MovieRepository;
 import com.outsera.piorfilme.repository.ProducerRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +33,21 @@ public class LoadFilmesImpl implements ILoadFilmes {
             throw new IOException("File not found");
         }
 
+        populaBase(inputStream);
+
+    }
+
+    @Override
+    public void reloadData(MultipartFile file) {
+        deleteFilmes();
+        try {
+            populaBase(file.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void populaBase(InputStream inputStream) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             reader.readLine(); // skip header
             String line;
@@ -60,7 +76,11 @@ public class LoadFilmesImpl implements ILoadFilmes {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
+    @Override
+    public void deleteFilmes() {
+        movieRepository.deleteAll();
+        producerRepository.deleteAll();
+    }
 }
