@@ -60,7 +60,7 @@ public class LoadFilmesImpl implements ILoadFilmes {
                 movie.setTitle(values[1].trim());
                 movie.setStudios(values[2].trim());
                 movie.setWinner("yes".equalsIgnoreCase(values[4].trim()));
-                String[] producers = values[3].split(" and ");
+                String[] producers = values[3].split(", | and ") ;
                 for (String p : producers) {
                     Producer producer = producerRepository.findByName(p);
                     if (producer == null) {
