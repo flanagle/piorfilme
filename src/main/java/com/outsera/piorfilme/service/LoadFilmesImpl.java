@@ -26,8 +26,8 @@ public class LoadFilmesImpl implements ILoadFilmes {
 
 
     @PostConstruct
-    public void loadFilmes () throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("movielist.csv");
+    public void loadFilmes() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("movielist2.csv");
 
         if (inputStream == null) {
             throw new IOException("File not found");
@@ -49,10 +49,12 @@ public class LoadFilmesImpl implements ILoadFilmes {
 
     private void populaBase(InputStream inputStream) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            reader.readLine(); // skip header
+//            reader.readLine(); // skip header
+            String[] values = reader.readLine().split(";", -1);
+            checkHeader(values);
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] values = line.split(";", -1);
+                values = line.split(";", -1);
                 Movie movie = new Movie();
                 movie.setYear(Integer.parseInt(values[0].trim()));
                 movie.setTitle(values[1].trim());
@@ -75,6 +77,28 @@ public class LoadFilmesImpl implements ILoadFilmes {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void checkHeader(String[] values) {
+
+        for (int i = 0; i < values.length; i++) {
+            if (i == 0 && "year".equals(values[i].trim())) {
+                continue;
+            }
+            if (i == 1 && "title".equals(values[i].trim())) {
+                continue;
+            }
+            if (i == 2 && "studios".equals(values[i].trim())) {
+                continue;
+            }
+            if (i == 3 && "producers".equals(values[i].trim())) {
+                continue;
+            }
+            if (i == 4 && "winner".equals(values[i].trim())) {
+                continue;
+            }
+            throw new RuntimeException("Header invalido");
         }
     }
 

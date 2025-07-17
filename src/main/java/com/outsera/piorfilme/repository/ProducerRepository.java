@@ -98,5 +98,16 @@ public interface ProducerRepository extends ListCrudRepository<Producer, Integer
     """)
     List<PiorFilmeDTO> findMaxIntervals();
 
+    @Query("SELECT DISTINCT p FROM Producer p")
+    List<Producer> findAllDistinctNames();
+
     Producer findByName(String name);
+
+    @Query("""
+                SELECT m.year FROM Producer p
+                JOIN p.movies m
+                WHERE m.winner = true AND p.id = :id
+                ORDER BY m.year
+            """)
+    List<Integer> findWinYears(Integer id);
 }

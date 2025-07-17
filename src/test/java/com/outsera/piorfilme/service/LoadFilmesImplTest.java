@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.core.StringContains.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,5 +31,19 @@ class LoadFilmesImplTest {
         mockMvc.perform(multipart("/api/atualizar-base").file(file))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("atualizada com sucesso")));
+    }
+
+    @Test
+    void testGetPioresFiles() throws Exception {
+        mockMvc.perform(get("/api/pior-filme"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.min[0].producer").value("Joel Silver"))
+                .andExpect(jsonPath("$.min[0].interval").value(1))
+                .andExpect(jsonPath("$.min[0].previousWin").value(1990))
+                .andExpect(jsonPath("$.min[0].followingWin").value(1991))
+                .andExpect(jsonPath("$.max[0].producer").value("Buzz Feitshans"))
+                .andExpect(jsonPath("$.max[0].interval").value(9))
+                .andExpect(jsonPath("$.max[0].previousWin").value(1985))
+                .andExpect(jsonPath("$.max[0].followingWin").value(1994));
     }
 }
